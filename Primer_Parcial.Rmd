@@ -1,0 +1,68 @@
+---
+title: "Primer Parcial"
+author: "..."
+date: "2024-03-06"
+output: 
+  html_document:
+    df_print: paged
+    theme: darkly
+    highlight: breezedark
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("readxl", repos = "http://cran.us.r-project.org")
+library(readxl)
+```
+
+## Primer Parcial
+
+Cargamos el archivo xlsx con la libreria readxl.
+
+```{r}
+
+d_olimpicos <- read_excel("Olimpicos Atenas 2004.xlsx")
+
+set.seed(1234)
+ds_olimpicos <- d_olimpicos[sample(1:nrow(d_olimpicos), size=200), ]
+
+```
+Eliminamos columnas ID, NOC, Games, Year, Season y City
+```{r }
+ds_olimpicos$ID <- NULL
+
+ds_olimpicos$NOC <- NULL
+
+ds_olimpicos$Games <- NULL
+
+ds_olimpicos$Year <- NULL
+
+ds_olimpicos$Season <- NULL
+
+ds_olimpicos$City <- NULL
+
+#excluir <- c("ID", "NOC", "Games", "Year", "Season", "City")
+#ds_olimpicos <- ds_olimpicos[, !(names(ds_olimpicos) %in% excluir)]
+
+```
+
+
+## Medalleria
+```{r medallas por paises}
+
+index_con_medalla = ds_olimpicos$Medal != "NA"
+m_medalla <- ds_olimpicos[index_con_medalla,]
+pais_medalla <- m_medalla[, c("Team", "Medal")]
+
+tabla_Pais_medalla <- table(pais_medalla)
+medallas <- as.data.frame.matrix(tabla_Pais_medalla)
+
+medallas$puntos <- (medallas$Bronze + (medallas$Silver * 2) + (medallas$Gold * 3))
+medallas_ordenadas <- medallas[order(medallas$puntos, decreasing = TRUE),]
+medallas_ordenadas
+```
+
